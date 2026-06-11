@@ -1,4 +1,4 @@
-package com.ins.ins_classes_be.dto.response;
+package com.ins.ins_classes_be.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiResponse<T> {
-    private T data;
+    private T data = null;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private ErrorResponse error;
