@@ -12,7 +12,7 @@ REST API for a class management system (INS Classes Manager). Manages users (adm
 - **Lombok** + **MapStruct 1.5.5** (annotation processors)
 - Context path: **`/api`** (all endpoints are prefixed, e.g. `/api/users`)
 - Pagination is **1-indexed** (`spring.data.web.pageable.one-indexed-parameters=true`)
-- **Spring Security + JWT (jjwt 0.12, HS256)** — token issuing only: all endpoints are still `permitAll` (lock down in `SecurityConfig` when needed). `JwtAuthFilter` sets the `SecurityContext` (principal = userId as `Long`) when a valid Bearer token is present. Passwords hashed with BCrypt. JWT secret/lifetimes in `application.properties` (`app.jwt.*`; access 1h, refresh 14d)
+- **Spring Security + JWT (jjwt 0.12, HS256)** — endpoints are locked down: `/auth/**` and `/public/**` are `permitAll`, everything else requires authentication; unauthenticated requests get a 401 with the `ApiResponse` error envelope (custom `AuthenticationEntryPoint`). Security matchers are **relative to the `/api` context path** (write `/auth/login`, not `/api/auth/login`). `JwtAuthFilter` sets the `SecurityContext` (principal = userId as `Long`) when a valid Bearer token is present. Passwords hashed with BCrypt. JWT secret/lifetimes in `application.properties` (`app.jwt.*`; access 1h, refresh 14d)
 
 Run: `./gradlew bootRun` (MySQL must be running on port 3307)
 
@@ -22,10 +22,10 @@ Run: `./gradlew bootRun` (MySQL must be running on port 3307)
 src/main/java/com/ins/ins_classes_be/
 ├── InsClassesBeApplication.java
 ├── config/                  # Spring configuration
-│   └── SecurityConfig.java      # Filter chain (stateless, permitAll), PasswordEncoder bean
+│   └── SecurityConfig.java      # Filter chain (stateless, /auth/** + /public/** open, rest authenticated), JSON 401 entry point, PasswordEncoder bean
 ├── security/                # JWT infrastructure
 │   ├── JwtService.java          # Generate/parse HS256 tokens (claims: sub=userId, email, type)
-│   └── JwtAuthFilter.java       # Populates SecurityContext from Bearer token (lenient, never blocks)
+│   └── JwtAuthFilter.java       # Populates SecurityContext from Bearer token; invalid token throws BusinessException (see Known gaps)
 ├── common/                  # Shared infrastructure (no business logic)
 │   ├── ApiResponse.java         # Response envelope: { data, error? }
 │   ├── ListResponse.java        # Paginated list: { items, metadata }
@@ -80,7 +80,7 @@ All paths are under the `/api` context path.
 
 | Method | Path | Description |
 |--------|--------------|--------------------------------------------|
-| POST | `/auth/register` | Self-registration (name, email, password, avatar?) — type is always `USER` → `AuthDto` (auto-login) |
+| POST | `/auth/register` | Self-registration (name, email, password) — type is always `USER` → `AuthDto` (auto-login) |
 | POST | `/auth/login` | Login (email, password) → `AuthDto { accessToken, refreshToken, user }` |
 | POST | `/auth/refresh` | Rotate tokens; the refresh token must match `User.refreshToken` in DB |
 | GET | `/auth/me` | Current user from Bearer token → `UserDto` |
@@ -91,7 +91,7 @@ Refresh tokens are stored on the `User` entity (one valid refresh token per user
 
 | Method | Path | Description |
 |--------|--------------|--------------------------------------------|
-| POST | `/users` | Create user (type, name, email, password, avatar) |
+| POST | `/users` | Create user (type, name, email, password) |
 | GET | `/users` | List users (paginated via `Pageable`) |
 | GET | `/users/{id}` | Get user by id |
 | PUT | `/users/{id}` | Update user (partial: name, avatar) |
@@ -103,8 +103,8 @@ Sprint plan reference: root `README.md` (5-day plan — note it describes a diff
 
 - [x] Project setup (Gradle, MySQL, common infrastructure)
 - [x] User CRUD
-- [x] Auth (JWT register/login/refresh/me) + Spring Security — token issuing only; endpoint lock-down and logout not done yet
-- [x] JPA auditing — `createdBy`/`updatedBy` via `AuditorAware` (`JpaAuditingConfig`): userId when authenticated, the registrant's email during self-registration, `"SYSTEM"` otherwise
+- [x] Auth (JWT register/login/refresh/me) + Spring Security — endpoints locked down (`/auth/**` + `/public/**` open, rest authenticated); logout not done yet
+- [x] JPA auditing — `createdBy`/`updatedBy` via `AuditorAware` (`JpaAuditingConfig`): userId when authenticated, `"SYSTEM"` otherwise (incl. self-registration)
 - [ ] Role / Permission (RBAC)
 - [ ] Course + CourseModule + ModuleDocument (file upload)
 - [ ] Class + ClassSchedule
@@ -116,7 +116,10 @@ Sprint plan reference: root `README.md` (5-day plan — note it describes a diff
 ## Known gaps / TODO
 
 - Users created before BCrypt was introduced have plain-text passwords in the dev DB and cannot log in — re-create them via `POST /users`
-- All endpoints are still `permitAll`; protecting them is a one-line change in `SecurityConfig` once RBAC lands
-- A refresh token is a validly signed JWT, so it also works as a Bearer token on `/auth/me`; add a `token_type` claim when endpoints get locked down
+- In `SecurityConfig`, `/auth/**` `permitAll` is declared **before** `/auth/me` — first matcher wins, so `/auth/me` and `/auth/refresh` are effectively public (they still work only because they read the `SecurityContext`/token themselves)
+- `JwtAuthFilter` no longer catches `BusinessException`, so an invalid/expired Bearer token surfaces as a 500 (filter exceptions bypass `GlobalExceptionHandler`; the JSON 401 entry point only covers missing authentication)
+- A refresh token is a validly signed JWT, so it also works as a Bearer token; add a `token_type` claim to fix
+- `User.type` is a plain `String` column (diverges from convention #3 `@Enumerated`); the dev DB column is a MySQL `ENUM('ADMIN','TEACHER','USER')` — manually `ALTER`ed on 2026-06-12 because `ddl-auto=update` never alters existing columns, so any future `UserType` change needs a manual migration
+- `JwtService.extractUserId` logs the email claim at INFO on every authenticated request (debug leftover)
 - `CreateUserInput.isSendPasswordViaEmail` is accepted but not implemented
 - No tests yet (only the default `InsClassesBeApplicationTests` context-load test)
