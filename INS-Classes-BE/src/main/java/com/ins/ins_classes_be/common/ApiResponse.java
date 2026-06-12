@@ -29,6 +29,15 @@ public class ApiResponse<T> {
                 .build();
     }
 
+    public static <T> ApiResponse<T> error(ExceptionError error) {
+        return ApiResponse.<T>builder()
+                .error(ErrorResponse.builder()
+                        .code(error.getCode())
+                        .message(error.getMessage())
+                        .build())
+                .build();
+    }
+
     @Data
     @Builder
     @NoArgsConstructor

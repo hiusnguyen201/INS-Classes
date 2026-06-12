@@ -18,8 +18,6 @@ public class CreateUserInput {
     @NotNull(message = "User type is required")
     private UserType type;
 
-    private String avatar;
-
     @NotBlank(message = "Name is required")
     private String name;
 

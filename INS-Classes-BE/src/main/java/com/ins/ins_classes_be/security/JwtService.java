@@ -8,13 +8,16 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Map;
 
+@Slf4j
 @Service
 public class JwtService {
     private final SecretKey secretKey;
@@ -40,15 +43,25 @@ public class JwtService {
     }
 
     public Long extractUserId(String token) {
-        return Long.valueOf(parseClaims(token).getSubject());
+        Claims claims = parseClaims(token);
+
+        Long userId = Long.valueOf(claims.getSubject());
+        String email = claims.get("email", String.class);
+        String type = claims.get("type", String.class);
+
+        log.info("Token extracted - userId: {}, email: {}, type: {}", userId, email, type);
+
+        return userId;
     }
 
     private String generateToken(User user, long expirationMs) {
         Date now = new Date();
         return Jwts.builder()
                 .subject(String.valueOf(user.getId()))
-                .claim("email", user.getEmail())
-                .claim("type", user.getType().name())
+                .claims(Map.of(
+                        "email", user.getEmail(),
+                        "type", user.getType()
+                ))
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + expirationMs))
                 .signWith(secretKey)

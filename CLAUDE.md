@@ -8,7 +8,7 @@ Class management system (admin / teacher / student).
 
 ## Before working on the backend
 
-**Read `INS-Classes-BE/README.md` first** — it documents the real structure, conventions, endpoints, and implementation status. Keep its "API Endpoints" and "Implementation Status" sections updated when adding or changing modules.
+**Read `INS-Classes-BE/CLAUDE.md` first** — it documents the real structure, conventions, endpoints, and implementation status. Keep its "API Endpoints" and "Implementation Status" sections updated when adding or changing modules.
 
 Key conventions (full details in that file):
 
@@ -18,3 +18,4 @@ Key conventions (full details in that file):
 4. DTO naming: `CreateXxxInput` / `UpdateXxxInput` (requests, jakarta validation), `XxxDto` (responses). Partial updates apply non-null fields only.
 5. MapStruct mappers live in `service/mapper` (`componentModel = "spring"`).
 6. Context path is `/api`; pagination is 1-indexed via `Pageable`.
+7. Security: `/auth/**` and `/public/**` are public, everything else requires a Bearer token. Security matchers in `SecurityConfig` are relative to the context path (write `/auth/login`, not `/api/auth/login`).
