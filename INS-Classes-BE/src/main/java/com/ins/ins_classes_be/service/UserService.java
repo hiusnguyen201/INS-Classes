@@ -29,8 +29,7 @@ public class UserService {
         }
 
         User user = User.builder()
-                .type(createUserInput.getType())
-                .avatar(createUserInput.getAvatar())
+                .type(createUserInput.getType().toString())
                 .name(createUserInput.getName())
                 .email(createUserInput.getEmail())
                 .password(passwordEncoder.encode(createUserInput.getPassword()))

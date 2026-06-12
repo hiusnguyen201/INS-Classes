@@ -20,9 +20,8 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserType type;
+    private String type;
 
     private String avatar;
 

@@ -10,9 +10,4 @@ public class BusinessException extends RuntimeException {
         super(error.getMessage());
         this.error = error;
     }
-
-    public BusinessException(ExceptionError error, String message) {
-        super(message);
-        this.error = error;
-    }
 }

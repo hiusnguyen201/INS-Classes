@@ -35,24 +35,14 @@ public class AuthService {
         }
 
         User user = User.builder()
-                .type(UserType.USER)
+                .type(UserType.USER.toString())
                 .name(registerInput.getName())
                 .email(registerInput.getEmail())
                 .password(passwordEncoder.encode(registerInput.getPassword()))
-                .avatar(registerInput.getAvatar())
                 .build();
 
-        // Self-registration has no authenticated user: audit createdBy/updatedBy
-        // as the registrant's own email by temporarily authenticating as it.
-        Authentication previousAuth = SecurityContextHolder.getContext().getAuthentication();
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(registerInput.getEmail(), null, List.of()));
-        try {
-            user = userRepository.save(user);
-            return issueTokens(user);
-        } finally {
-            SecurityContextHolder.getContext().setAuthentication(previousAuth);
-        }
+        user = userRepository.save(user);
+        return issueTokens(user);
     }
 
     public AuthDto login(LoginInput loginInput) {
