@@ -9,7 +9,7 @@ React SPA for the INS Classes management system. Talks to the Spring Boot BE (`I
 - **React 18 + TypeScript + Vite 5**
 - **Tailwind CSS v4** via the `@tailwindcss/vite` plugin — design tokens live in `src/app/index.css` (`@theme` block)
 - Font: **Be Vietnam Pro** (Google Fonts, loaded in `index.html`)
-- No router, no state library yet (plain React context)
+- **react-router-dom** for client-side routing (`app/router.tsx`, `config/paths.ts`)
 - Design source: Figma file `INS-Classes-Management` (key `XJJGiCIHh65mmSYgu76viC`)
 
 Run: `npm run dev` (http://localhost:5173; proxies `/api` → `http://localhost:8080`, so the BE must be running for API calls). Build: `npm run build`. Lint: `npm run lint`.
@@ -24,12 +24,12 @@ src/
 │   └── index.css             # Tailwind entry + design tokens (@theme)
 ├── features/             # One folder per business module
 │   └── auth/
-│       ├── api/              # One file per BE endpoint (login.ts)
-│       ├── components/       # LoginForm, GoogleLoginButton (auth-only)
-│       ├── hooks/            # useAuth, useLogin
-│       ├── pages/            # LoginPage.tsx
+│       ├── api/              # One file per BE endpoint (login.ts, register.ts)
+│       ├── components/       # LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm, GoogleLoginButton
+│       ├── hooks/            # useAuth, useLogin, useRegister
+│       ├── pages/            # LoginPage, RegisterPage, ForgotPasswordPage, ResetPasswordPage
 │       ├── stores/           # AuthContext + AuthProvider (current user)
-│       └── types/            # UserDto, AuthDto, LoginInput
+│       └── types/            # UserDto, AuthDto, LoginInput, RegisterInput
 ├── components/           # Shared UI, no business logic
 │   ├── ui/                   # Button, TextField, Checkbox, icons.tsx
 │   └── layouts/              # AuthLayout (gradient bg + logo + footer)
@@ -55,9 +55,12 @@ src/
 
 - [x] Base structure + Tailwind v4 + design tokens + dev proxy
 - [x] Login page (Figma node `131-1351`) wired to `POST /auth/login`; tokens persisted per "remember me" (localStorage vs sessionStorage); BE error message shown on the form
-- [x] react-router-dom: `/` → HomePage, `/login` → LoginPage (`app/router.tsx`, `config/paths.ts`)
+- [x] react-router-dom: `app/router.tsx`, `config/paths.ts` — routes: `/`, `/login`, `/register`, `/forgot-password`, `/reset-password`
 - [x] Home / Landing page (Figma node `131-988`) — fully static, 10 components: Navbar, HeroSection, HeroMockup, StatsBar, FeaturesSection, AiSection, AiChatMockup, RolesSection, TestimonialSection, CtaSection, Footer; content in `features/landing/content.ts`
-- [ ] Google login, forgot password, register page — buttons/links are UI-only
+- [x] Register page (Figma node `147-3`) wired to `POST /auth/register`; role selector (Học viên / Giảng viên) is UI-only — BE always assigns USER type
+- [x] Forgot Password page (Figma node `147-80`) — UI-only (success state); BE endpoint not yet implemented
+- [x] Reset Password page (Figma node `147-115`) — UI-only (success state); BE endpoint not yet implemented
+- [ ] Google login — button is UI-only
 - [ ] Token refresh flow (`/auth/refresh`) + authenticated http interceptor
 - [ ] Post-login redirect to dashboard (LoginPage still shows welcome placeholder)
 - [ ] Everything else (dashboard, classes, users…)
