@@ -55,7 +55,9 @@ src/
 
 - [x] Base structure + Tailwind v4 + design tokens + dev proxy
 - [x] Login page (Figma node `131-1351`) wired to `POST /auth/login`; tokens persisted per "remember me" (localStorage vs sessionStorage); BE error message shown on the form
-- [ ] Routing (react-router) + post-login redirect — LoginPage currently shows a welcome placeholder after login
+- [x] react-router-dom: `/` → HomePage, `/login` → LoginPage (`app/router.tsx`, `config/paths.ts`)
+- [x] Home / Landing page (Figma node `131-988`) — fully static, 10 components: Navbar, HeroSection, HeroMockup, StatsBar, FeaturesSection, AiSection, AiChatMockup, RolesSection, TestimonialSection, CtaSection, Footer; content in `features/landing/content.ts`
 - [ ] Google login, forgot password, register page — buttons/links are UI-only
 - [ ] Token refresh flow (`/auth/refresh`) + authenticated http interceptor
+- [ ] Post-login redirect to dashboard (LoginPage still shows welcome placeholder)
 - [ ] Everything else (dashboard, classes, users…)

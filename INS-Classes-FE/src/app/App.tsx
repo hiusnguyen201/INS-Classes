@@ -1,11 +1,11 @@
+import { RouterProvider } from 'react-router-dom'
 import { AppProvider } from '@/app/provider'
-import { LoginPage } from '@/features/auth/pages/LoginPage'
+import { router } from '@/app/router'
 
 export default function App() {
-  // Routing comes later; LoginPage is the only page for now.
   return (
     <AppProvider>
-      <LoginPage />
+      <RouterProvider router={router} />
     </AppProvider>
   )
 }
