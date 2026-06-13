@@ -1,39 +1,34 @@
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 import { Button } from '@/components/ui/Button'
 import { TextField } from '@/components/ui/TextField'
 import { CheckIcon, EyeIcon, EyeOffIcon, LockIcon } from '@/components/ui/icons'
 import { PATHS } from '@/config/paths'
 
-interface FieldErrors {
-  password?: string
-  confirm?: string
-}
+const schema = Yup.object({
+  password: Yup.string()
+    .min(6, 'Mật khẩu tối thiểu 6 ký tự.')
+    .required('Vui lòng nhập mật khẩu mới.'),
+  confirm: Yup.string()
+    .oneOf([Yup.ref('password')], 'Mật khẩu không khớp.')
+    .required('Vui lòng xác nhận mật khẩu.'),
+})
 
 export function ResetPasswordForm() {
-  const [password, setPassword] = useState('')
-  const [confirm, setConfirm] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [done, setDone] = useState(false)
 
-  function validate(): boolean {
-    const errors: FieldErrors = {}
-    if (!password) errors.password = 'Vui lòng nhập mật khẩu mới.'
-    else if (password.length < 6) errors.password = 'Mật khẩu tối thiểu 6 ký tự.'
-    if (!confirm) errors.confirm = 'Vui lòng xác nhận mật khẩu.'
-    else if (confirm !== password) errors.confirm = 'Mật khẩu không khớp.'
-    setFieldErrors(errors)
-    return Object.keys(errors).length === 0
-  }
-
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    if (!validate()) return
-    // BE endpoint not yet implemented — show success UI
-    setDone(true)
-  }
+  const formik = useFormik({
+    initialValues: { password: '', confirm: '' },
+    validationSchema: schema,
+    onSubmit: (_values) => {
+      // BE endpoint not yet implemented — show success UI
+      setDone(true)
+    },
+  })
 
   if (done) {
     return (
@@ -56,16 +51,14 @@ export function ResetPasswordForm() {
   }
 
   return (
-    <form noValidate onSubmit={handleSubmit}>
+    <form noValidate onSubmit={formik.handleSubmit}>
       <TextField
         label="Mật khẩu mới"
         type={showPassword ? 'text' : 'password'}
         autoComplete="new-password"
         placeholder="••••••••"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
         icon={<LockIcon className="size-[19px]" />}
-        error={fieldErrors.password}
+        error={formik.touched.password ? formik.errors.password : undefined}
         trailing={
           <button
             type="button"
@@ -76,6 +69,7 @@ export function ResetPasswordForm() {
             {showPassword ? <EyeOffIcon className="size-[19px]" /> : <EyeIcon className="size-[19px]" />}
           </button>
         }
+        {...formik.getFieldProps('password')}
       />
       <TextField
         className="mt-4"
@@ -83,10 +77,8 @@ export function ResetPasswordForm() {
         type={showConfirm ? 'text' : 'password'}
         autoComplete="new-password"
         placeholder="••••••••"
-        value={confirm}
-        onChange={(e) => setConfirm(e.target.value)}
         icon={<LockIcon className="size-[19px]" />}
-        error={fieldErrors.confirm}
+        error={formik.touched.confirm ? formik.errors.confirm : undefined}
         trailing={
           <button
             type="button"
@@ -97,6 +89,7 @@ export function ResetPasswordForm() {
             {showConfirm ? <EyeOffIcon className="size-[19px]" /> : <EyeIcon className="size-[19px]" />}
           </button>
         }
+        {...formik.getFieldProps('confirm')}
       />
       <Button type="submit" className="mt-5">
         Đặt lại mật khẩu

@@ -1,55 +1,46 @@
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 import { Button } from '@/components/ui/Button'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { TextField } from '@/components/ui/TextField'
-import { ArrowRightIcon, EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon, UsersIcon, GraduationCapIcon } from '@/components/ui/icons'
-import { GoogleIcon } from '@/components/ui/icons'
+import {
+  ArrowRightIcon, EyeIcon, EyeOffIcon, LockIcon, MailIcon,
+  UserIcon, UsersIcon, GraduationCapIcon, GoogleIcon,
+} from '@/components/ui/icons'
 import { useRegister } from '@/features/auth/hooks/useRegister'
 import { PATHS } from '@/config/paths'
 import { cn } from '@/utils/cn'
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
 type Role = 'student' | 'teacher'
 
-interface FieldErrors {
-  name?: string
-  email?: string
-  password?: string
-  terms?: string
-}
+const schema = Yup.object({
+  name: Yup.string().required('Vui lòng nhập họ và tên.'),
+  email: Yup.string()
+    .email('Email không đúng định dạng.')
+    .required('Vui lòng nhập email.'),
+  password: Yup.string()
+    .min(6, 'Mật khẩu tối thiểu 6 ký tự.')
+    .required('Vui lòng nhập mật khẩu.'),
+  terms: Yup.boolean().oneOf([true], 'Bạn cần đồng ý với Điều khoản & Bảo mật.'),
+})
 
 export function RegisterForm() {
   const { submit, isLoading, error } = useRegister()
   const [role, setRole] = useState<Role>('student')
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [terms, setTerms] = useState(false)
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
 
-  function validate(): boolean {
-    const errors: FieldErrors = {}
-    if (!name.trim()) errors.name = 'Vui lòng nhập họ và tên.'
-    if (!email.trim()) errors.email = 'Vui lòng nhập email.'
-    else if (!EMAIL_PATTERN.test(email.trim())) errors.email = 'Email không đúng định dạng.'
-    if (!password) errors.password = 'Vui lòng nhập mật khẩu.'
-    else if (password.length < 6) errors.password = 'Mật khẩu tối thiểu 6 ký tự.'
-    if (!terms) errors.terms = 'Bạn cần đồng ý với Điều khoản & Bảo mật.'
-    setFieldErrors(errors)
-    return Object.keys(errors).length === 0
-  }
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    if (!validate()) return
-    await submit({ name: name.trim(), email: email.trim(), password })
-  }
+  const formik = useFormik({
+    initialValues: { name: '', email: '', password: '', terms: false },
+    validationSchema: schema,
+    onSubmit: async (values) => {
+      await submit({ name: values.name.trim(), email: values.email.trim(), password: values.password })
+    },
+  })
 
   return (
-    <form noValidate onSubmit={handleSubmit}>
+    <form noValidate onSubmit={formik.handleSubmit}>
       {/* Role selector */}
       <div className="mb-5">
         <p className="mb-2 text-[13px] font-semibold text-label">Bạn là</p>
@@ -61,11 +52,11 @@ export function RegisterForm() {
             <button
               key={value}
               type="button"
-              onClick={() => setRole(value as Role)}
+              onClick={() => setRole(value)}
               className={cn(
                 'flex items-center justify-center gap-2 rounded-[9px] py-2.5 text-[14px] font-semibold transition-all',
                 role === value
-                  ? 'bg-white text-primary shadow-sm border border-card-edge'
+                  ? 'border border-card-edge bg-white text-primary shadow-sm'
                   : 'text-muted hover:text-label',
               )}
             >
@@ -87,10 +78,9 @@ export function RegisterForm() {
         type="text"
         autoComplete="name"
         placeholder="Nguyễn Văn A"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
         icon={<UserIcon className="size-[19px]" />}
-        error={fieldErrors.name}
+        error={formik.touched.name ? formik.errors.name : undefined}
+        {...formik.getFieldProps('name')}
       />
       <TextField
         className="mt-4"
@@ -98,10 +88,9 @@ export function RegisterForm() {
         type="email"
         autoComplete="email"
         placeholder="ban@ins.edu.vn"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
         icon={<MailIcon className="size-[19px]" />}
-        error={fieldErrors.email}
+        error={formik.touched.email ? formik.errors.email : undefined}
+        {...formik.getFieldProps('email')}
       />
       <TextField
         className="mt-4"
@@ -109,10 +98,8 @@ export function RegisterForm() {
         type={showPassword ? 'text' : 'password'}
         autoComplete="new-password"
         placeholder="••••••••"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
         icon={<LockIcon className="size-[19px]" />}
-        error={fieldErrors.password}
+        error={formik.touched.password ? formik.errors.password : undefined}
         trailing={
           <button
             type="button"
@@ -123,22 +110,25 @@ export function RegisterForm() {
             {showPassword ? <EyeOffIcon className="size-[19px]" /> : <EyeIcon className="size-[19px]" />}
           </button>
         }
+        {...formik.getFieldProps('password')}
       />
 
       <div className="mt-4">
         <Checkbox
           label=""
-          checked={terms}
-          onChange={(e) => setTerms(e.target.checked)}
+          checked={formik.values.terms}
+          onChange={(e) => formik.setFieldValue('terms', e.target.checked)}
+          onBlur={() => formik.setFieldTouched('terms', true)}
         />
-        {/* Inline label with link */}
         <span className="-mt-[26px] ml-8 block text-[13.5px] text-label pointer-events-none">
           Tôi đồng ý với{' '}
           <a href="#" className="pointer-events-auto font-semibold text-primary hover:underline">
             Điều khoản &amp; Bảo mật
           </a>
         </span>
-        {fieldErrors.terms && <p className="mt-1.5 text-[12.5px] text-red-600">{fieldErrors.terms}</p>}
+        {formik.touched.terms && formik.errors.terms && (
+          <p className="mt-1.5 text-[12.5px] text-red-600">{formik.errors.terms}</p>
+        )}
       </div>
 
       <Button type="submit" disabled={isLoading} className="mt-5">
