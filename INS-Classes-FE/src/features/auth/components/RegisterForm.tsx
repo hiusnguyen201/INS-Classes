@@ -78,7 +78,7 @@ export function RegisterForm() {
         type="text"
         autoComplete="name"
         placeholder="Nguyễn Văn A"
-        icon={<UserIcon className="size-[19px]" />}
+        icon={<UserIcon className="size-4.75" />}
         error={formik.touched.name ? formik.errors.name : undefined}
         {...formik.getFieldProps('name')}
       />
@@ -88,7 +88,7 @@ export function RegisterForm() {
         type="email"
         autoComplete="email"
         placeholder="ban@ins.edu.vn"
-        icon={<MailIcon className="size-[19px]" />}
+        icon={<MailIcon className="size-4.75" />}
         error={formik.touched.email ? formik.errors.email : undefined}
         {...formik.getFieldProps('email')}
       />
@@ -98,7 +98,7 @@ export function RegisterForm() {
         type={showPassword ? 'text' : 'password'}
         autoComplete="new-password"
         placeholder="••••••••"
-        icon={<LockIcon className="size-[19px]" />}
+        icon={<LockIcon className="size-4.75" />}
         error={formik.touched.password ? formik.errors.password : undefined}
         trailing={
           <button
@@ -107,7 +107,7 @@ export function RegisterForm() {
             aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
             className="shrink-0 cursor-pointer text-faint transition-colors hover:text-label"
           >
-            {showPassword ? <EyeOffIcon className="size-[19px]" /> : <EyeIcon className="size-[19px]" />}
+            {showPassword ? <EyeOffIcon className="size-4.75" /> : <EyeIcon className="size-4.75" />}
           </button>
         }
         {...formik.getFieldProps('password')}
@@ -120,7 +120,7 @@ export function RegisterForm() {
           onChange={(e) => formik.setFieldValue('terms', e.target.checked)}
           onBlur={() => formik.setFieldTouched('terms', true)}
         />
-        <span className="-mt-[26px] ml-8 block text-[13.5px] text-label pointer-events-none">
+        <span className="-mt-6.5 ml-8 block text-[13.5px] text-label pointer-events-none">
           Tôi đồng ý với{' '}
           <a href="#" className="pointer-events-auto font-semibold text-primary hover:underline">
             Điều khoản &amp; Bảo mật
@@ -133,7 +133,7 @@ export function RegisterForm() {
 
       <Button type="submit" disabled={isLoading} className="mt-5">
         {isLoading ? 'Đang tạo tài khoản…' : 'Tạo tài khoản'}
-        {!isLoading && <ArrowRightIcon className="size-[19px]" />}
+        {!isLoading && <ArrowRightIcon className="size-4.75" />}
       </Button>
 
       <div className="my-6 flex items-center gap-3">
@@ -143,7 +143,7 @@ export function RegisterForm() {
       </div>
 
       <Button variant="outline" type="button">
-        <GoogleIcon className="size-[19px]" />
+        <GoogleIcon className="size-4.75" />
         Đăng ký với Google
       </Button>
 
