@@ -20,25 +20,31 @@ Run: `npm run dev` (http://localhost:5173; proxies `/api` → `http://localhost:
 ```
 src/
 ├── app/                  # App bootstrap layer
-│   ├── App.tsx               # Root component: providers + (later) router
+│   ├── App.tsx               # Root component: providers + router
 │   ├── provider.tsx          # AppProvider — stack all context providers here
 │   └── index.css             # Tailwind entry + design tokens (@theme)
 ├── features/             # One folder per business module
-│   └── auth/
-│       ├── api/              # One file per BE endpoint (login.ts, register.ts)
-│       ├── components/       # LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm, GoogleLoginButton
-│       ├── hooks/            # useAuth, useLogin, useRegister
-│       ├── pages/            # LoginPage, RegisterPage, ForgotPasswordPage, ResetPasswordPage
-│       ├── stores/           # AuthContext + AuthProvider (current user)
-│       └── types/            # UserDto, AuthDto, LoginInput, RegisterInput
+│   ├── auth/
+│   │   ├── api/              # login.ts, register.ts
+│   │   ├── components/       # LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm, GoogleLoginButton
+│   │   ├── hooks/            # useAuth, useLogin, useRegister
+│   │   ├── pages/            # LoginPage, RegisterPage, ForgotPasswordPage, ResetPasswordPage
+│   │   ├── stores/           # AuthContext + AuthProvider (current user)
+│   │   └── types/            # UserDto, AuthDto, LoginInput, RegisterInput
+│   └── users/
+│       ├── api/              # getUsers.ts, createUser.ts, updateUser.ts, deleteUser.ts
+│       ├── components/       # UserAvatarInitials, UserTypeBadge, CreateUserModal, UpdateUserModal, DeleteUserModal
+│       ├── hooks/            # useUsers, useCreateUser, useUpdateUser, useDeleteUser
+│       ├── pages/            # UsersPage
+│       └── types/            # UserType (enum), UserDto, CreateUserInput, UpdateUserInput
 ├── components/           # Shared UI, no business logic
 │   ├── ui/                   # Button, TextField, Checkbox, icons.tsx
-│   └── layouts/              # AuthLayout (gradient bg + logo + footer)
+│   └── layouts/              # AuthLayout, AdminLayout (sticky sidebar 230px + sticky header 60px)
 ├── lib/                  # Infrastructure wrappers
 │   ├── http.ts               # fetch client: base /api, unwraps ApiResponse{data,error}, throws HttpError
 │   └── storage.ts            # tokenStorage: localStorage (remember) / sessionStorage
 ├── types/                # Shared API types: ApiResponse, ListResponse, PageMetadata
-├── config/               # env.ts (VITE_API_URL, defaults to /api)
+├── config/               # env.ts, paths.ts (PATHS const for all routes)
 ├── hooks/, utils/        # Shared hooks / pure functions (utils/cn.ts)
 └── main.tsx
 ```
@@ -63,7 +69,8 @@ src/
 - [x] Forgot Password page (Figma node `147-80`) — UI-only (success state); BE endpoint not yet implemented
 - [x] Reset Password page (Figma node `147-115`) — UI-only (success state); BE endpoint not yet implemented
 - [x] All auth forms migrated to Formik + Yup (LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm)
+- [x] Admin Users CRUD (Figma nodes `150-2187/2416/2687/2958`) — List (paginated, tab filter by type, debounced keyword search), Create (auto-generated password `Ins@ + 8 chars`), Update (name + type), Delete (soft-delete via BE); `AdminLayout` with sticky sidebar + sticky header; `UserAvatarInitials` (deterministic color from name), `UserTypeBadge`; route `/admin/users` — see spec `docs/superpowers/specs/2026-06-14-admin-users-crud-design.md`
 - [ ] Google login — button is UI-only
 - [ ] Token refresh flow (`/auth/refresh`) + authenticated http interceptor
 - [ ] Post-login redirect to dashboard (LoginPage still shows welcome placeholder)
-- [ ] Everything else (dashboard, classes, users…)
+- [ ] Admin dashboard, courses, classes, roles pages
