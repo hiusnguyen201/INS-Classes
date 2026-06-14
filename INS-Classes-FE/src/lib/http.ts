@@ -1,4 +1,5 @@
 import { env } from '@/config/env'
+import { tokenStorage } from '@/lib/storage'
 import type { ApiResponse } from '@/types/api'
 
 const GENERIC_MESSAGE = 'Có lỗi xảy ra, vui lòng thử lại.'
@@ -15,11 +16,14 @@ export class HttpError extends Error {
 }
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const token = tokenStorage.getAccessToken()
+  const authHeaders = token ? { Authorization: `Bearer ${token}` } : {}
+
   let res: Response
   try {
     res = await fetch(`${env.apiUrl}${path}`, {
       ...init,
-      headers: { 'Content-Type': 'application/json', ...init.headers },
+      headers: { 'Content-Type': 'application/json', ...authHeaders, ...init.headers },
     })
   } catch {
     throw new HttpError(0, 'NETWORK_ERROR', 'Không thể kết nối máy chủ, vui lòng kiểm tra lại.')

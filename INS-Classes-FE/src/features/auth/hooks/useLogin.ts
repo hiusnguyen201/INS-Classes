@@ -9,11 +9,11 @@ export function useLogin() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  async function submit(input: LoginInput, _remember: boolean): Promise<boolean> {
+  async function submit(input: LoginInput, remember: boolean): Promise<boolean> {
     setIsLoading(true)
     setError(null)
     try {
-      startSession(await login(input), true) // always localStorage per product spec
+      startSession(await login(input), remember) // always localStorage per product spec
       return true
     } catch (e) {
       setError(e instanceof HttpError ? e.message : 'Có lỗi xảy ra, vui lòng thử lại.')

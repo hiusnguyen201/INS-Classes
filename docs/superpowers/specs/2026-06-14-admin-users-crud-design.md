@@ -63,25 +63,30 @@ src/features/users/
 ## 4. Data Model
 
 ```ts
+enum UserType {
+  ADMIN = 'ADMIN',
+  TEACHER = 'TEACHER',
+  USER = 'USER',
+}
+
 interface UserDto {
   id: number
   name: string
   email: string
-  type: 'ADMIN' | 'TEACHER' | 'USER'
-  role: string | null
+  type: UserType
   createdAt: string
 }
 
 interface CreateUserInput {
   name: string
   email: string
-  type: 'ADMIN' | 'TEACHER' | 'USER'
+  type: UserType
   password: string // auto-generated on FE, not shown in UI
 }
 
 interface UpdateUserInput {
   name?: string
-  type?: 'ADMIN' | 'TEACHER' | 'USER'
+  type?: UserType
 }
 ```
 
@@ -105,7 +110,7 @@ interface UpdateUserInput {
 - **Toolbar:** title + total count + Nhập Excel / Xuất Excel (UI-only, disabled) + Thêm người dùng
 - **Filter tabs:** Tất cả | Admin | Giảng viên | Học viên → `typeFilter` state
 - **Search:** debounced 300 ms → `keyword` state
-- **Table columns:** Avatar+Name | Email | Loại (badge) | Vai trò | Thao tác (edit + delete icons)
+- **Table columns:** Avatar+Name | Email | Loại (badge) | Thao tác (edit + delete icons)
 - **Pagination footer:** "Hiển thị X–Y trong Z kết quả" + page buttons
 
 ---

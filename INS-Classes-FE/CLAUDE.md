@@ -69,8 +69,9 @@ src/
 - [x] Forgot Password page (Figma node `147-80`) — UI-only (success state); BE endpoint not yet implemented
 - [x] Reset Password page (Figma node `147-115`) — UI-only (success state); BE endpoint not yet implemented
 - [x] All auth forms migrated to Formik + Yup (LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm)
-- [x] Admin Users CRUD (Figma nodes `150-2187/2416/2687/2958`) — List (paginated, tab filter by type, debounced keyword search), Create (auto-generated password `Ins@ + 8 chars`), Update (name + type), Delete (soft-delete via BE); `AdminLayout` with sticky sidebar + sticky header; `UserAvatarInitials` (deterministic color from name), `UserTypeBadge`; route `/admin/users` — see spec `docs/superpowers/specs/2026-06-14-admin-users-crud-design.md`
+- [x] Admin Users CRUD (Figma nodes `150-2187/2416/2687/2958`) — List (paginated, tab filter by type, debounced keyword search), Create (password auto-gen on first focus, visible until blur/type, toggle eye icon, `isSendPasswordViaEmail` checkbox), Update (name + type), Delete (soft-delete via BE); `AdminLayout` with sticky sidebar + sticky header + logout dropdown; `UserAvatarInitials` (deterministic color from name), `UserTypeBadge`; route `/admin/users` — see spec `docs/superpowers/specs/2026-06-14-admin-users-crud-design.md`
+- [x] `lib/http.ts` auto-injects `Authorization: Bearer <token>` on every request (reads from `tokenStorage`)
 - [ ] Google login — button is UI-only
-- [ ] Token refresh flow (`/auth/refresh`) + authenticated http interceptor
+- [ ] Token refresh flow (`/auth/refresh`) + 401 interceptor
 - [ ] Post-login redirect to dashboard (LoginPage still shows welcome placeholder)
 - [ ] Admin dashboard, courses, classes, roles pages

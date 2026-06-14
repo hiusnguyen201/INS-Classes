@@ -3,7 +3,7 @@ import { HttpError } from '@/lib/http'
 import { createUser } from '@/features/users/api/createUser'
 import type { CreateUserInput } from '@/features/users/types'
 
-function generatePassword(): string {
+export function generatePassword(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   let result = 'Ins@'
   for (let i = 0; i < 8; i++) {
@@ -16,11 +16,11 @@ export function useCreateUser(onSuccess: () => void) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  async function submit(input: Omit<CreateUserInput, 'password'>): Promise<boolean> {
+  async function submit(input: CreateUserInput): Promise<boolean> {
     setIsLoading(true)
     setError(null)
     try {
-      await createUser({ ...input, password: generatePassword() })
+      await createUser(input)
       onSuccess()
       return true
     } catch (e) {
