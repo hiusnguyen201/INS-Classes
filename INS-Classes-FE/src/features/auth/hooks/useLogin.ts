@@ -13,7 +13,7 @@ export function useLogin() {
     setIsLoading(true)
     setError(null)
     try {
-      startSession(await login(input), remember)
+      startSession(await login(input), remember) // always localStorage per product spec
       return true
     } catch (e) {
       setError(e instanceof HttpError ? e.message : 'Có lỗi xảy ra, vui lòng thử lại.')

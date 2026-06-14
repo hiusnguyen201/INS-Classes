@@ -19,6 +19,7 @@ export interface CreateUserInput {
   email: string
   type: UserType
   password: string
+  isSendPasswordViaEmail: boolean
 }
 
 export interface UpdateUserInput {

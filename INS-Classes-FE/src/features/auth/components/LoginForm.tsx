@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Button } from '@/components/ui/Button'
@@ -7,7 +6,6 @@ import { Checkbox } from '@/components/ui/Checkbox'
 import { TextField } from '@/components/ui/TextField'
 import { ArrowRightIcon, EyeIcon, EyeOffIcon, LockIcon, MailIcon } from '@/components/ui/icons'
 import { useLogin } from '@/features/auth/hooks/useLogin'
-import { PATHS } from '@/config/paths'
 
 const schema = Yup.object({
   email: Yup.string()
@@ -76,9 +74,9 @@ export function LoginForm() {
           checked={remember}
           onChange={(e) => setRemember(e.target.checked)}
         />
-        <Link to={PATHS.forgotPassword} className="text-[13.5px] font-semibold text-primary hover:underline">
+        {/* <Link to={PATHS.forgotPassword} className="text-[13.5px] font-semibold text-primary hover:underline">
           Quên mật khẩu?
-        </Link>
+        </Link> */}
       </div>
 
       <Button type="submit" disabled={isLoading} className="mt-5.5">
