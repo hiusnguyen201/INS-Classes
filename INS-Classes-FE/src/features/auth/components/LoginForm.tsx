@@ -1,42 +1,36 @@
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 import { Button } from '@/components/ui/Button'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { TextField } from '@/components/ui/TextField'
 import { ArrowRightIcon, EyeIcon, EyeOffIcon, LockIcon, MailIcon } from '@/components/ui/icons'
 import { useLogin } from '@/features/auth/hooks/useLogin'
+import { PATHS } from '@/config/paths'
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-interface FieldErrors {
-  email?: string
-  password?: string
-}
+const schema = Yup.object({
+  email: Yup.string()
+    .email('Email không đúng định dạng.')
+    .required('Vui lòng nhập email.'),
+  password: Yup.string().required('Vui lòng nhập mật khẩu.'),
+})
 
 export function LoginForm() {
   const { submit, isLoading, error } = useLogin()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [remember, setRemember] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
 
-  function validate(): boolean {
-    const errors: FieldErrors = {}
-    if (!email.trim()) errors.email = 'Vui lòng nhập email.'
-    else if (!EMAIL_PATTERN.test(email.trim())) errors.email = 'Email không đúng định dạng.'
-    if (!password) errors.password = 'Vui lòng nhập mật khẩu.'
-    setFieldErrors(errors)
-    return Object.keys(errors).length === 0
-  }
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    if (!validate()) return
-    await submit({ email: email.trim(), password }, remember)
-  }
+  const formik = useFormik({
+    initialValues: { email: '', password: '' },
+    validationSchema: schema,
+    onSubmit: async (values) => {
+      await submit({ email: values.email, password: values.password }, remember)
+    },
+  })
 
   return (
-    <form noValidate onSubmit={handleSubmit}>
+    <form noValidate onSubmit={formik.handleSubmit}>
       {error && (
         <p
           role="alert"
@@ -45,15 +39,15 @@ export function LoginForm() {
           {error}
         </p>
       )}
+
       <TextField
         label="Email"
         type="email"
         autoComplete="email"
         placeholder="ban@ins.edu.vn"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
         icon={<MailIcon className="size-[19px]" />}
-        error={fieldErrors.email}
+        error={formik.touched.email ? formik.errors.email : undefined}
+        {...formik.getFieldProps('email')}
       />
       <TextField
         className="mt-4"
@@ -61,10 +55,8 @@ export function LoginForm() {
         type={showPassword ? 'text' : 'password'}
         autoComplete="current-password"
         placeholder="••••••••"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
         icon={<LockIcon className="size-[19px]" />}
-        error={fieldErrors.password}
+        error={formik.touched.password ? formik.errors.password : undefined}
         trailing={
           <button
             type="button"
@@ -75,17 +67,20 @@ export function LoginForm() {
             {showPassword ? <EyeOffIcon className="size-[19px]" /> : <EyeIcon className="size-[19px]" />}
           </button>
         }
+        {...formik.getFieldProps('password')}
       />
+
       <div className="mt-4 flex items-center justify-between">
         <Checkbox
           label="Ghi nhớ đăng nhập"
           checked={remember}
           onChange={(e) => setRemember(e.target.checked)}
         />
-        <a href="#" className="text-[13.5px] font-semibold text-primary hover:underline">
+        <Link to={PATHS.forgotPassword} className="text-[13.5px] font-semibold text-primary hover:underline">
           Quên mật khẩu?
-        </a>
+        </Link>
       </div>
+
       <Button type="submit" disabled={isLoading} className="mt-[22px]">
         {isLoading ? 'Đang đăng nhập…' : 'Đăng nhập'}
         {!isLoading && <ArrowRightIcon className="size-[19px]" />}

@@ -1,8 +1,10 @@
+import { Link } from 'react-router-dom'
 import { AuthLayout } from '@/components/layouts/AuthLayout'
 import { Button } from '@/components/ui/Button'
 import { GoogleLoginButton } from '@/features/auth/components/GoogleLoginButton'
 import { LoginForm } from '@/features/auth/components/LoginForm'
 import { useAuth } from '@/features/auth/hooks/useAuth'
+import { PATHS } from '@/config/paths'
 
 export function LoginPage() {
   const { user, clearSession } = useAuth()
@@ -11,7 +13,6 @@ export function LoginPage() {
     <AuthLayout>
       <div className="w-full rounded-[20px] border border-card-edge bg-white px-9 pt-[34px] pb-9 shadow-[0_24px_60px_-20px_rgba(15,27,51,0.22),0_4px_12px_-6px_rgba(15,27,51,0.08)]">
         {user ? (
-          /* Placeholder until routing lands: confirm the session works */
           <div className="flex flex-col items-center gap-4 text-center">
             <h1 className="text-[25px] font-extrabold tracking-[-0.5px] text-ink">
               Xin chào, {user.name}!
@@ -42,9 +43,9 @@ export function LoginPage() {
             <GoogleLoginButton />
             <p className="mt-8 text-center text-[14px] text-muted">
               Chưa có tài khoản?{' '}
-              <a href="#" className="font-bold text-primary hover:underline">
+              <Link to={PATHS.register} className="font-bold text-primary hover:underline">
                 Đăng ký ngay
-              </a>
+              </Link>
             </p>
           </>
         )}
