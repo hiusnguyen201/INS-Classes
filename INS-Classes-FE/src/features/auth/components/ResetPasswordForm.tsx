@@ -24,7 +24,7 @@ export function ResetPasswordForm() {
   const formik = useFormik({
     initialValues: { password: '', confirm: '' },
     validationSchema: schema,
-    onSubmit: (_values) => {
+    onSubmit: () => {
       // BE endpoint not yet implemented — show success UI
       setDone(true)
     },
@@ -33,7 +33,7 @@ export function ResetPasswordForm() {
   if (done) {
     return (
       <div className="flex flex-col items-center gap-4 py-2 text-center">
-        <div className="flex size-[56px] items-center justify-center rounded-2xl bg-green-50">
+        <div className="flex size-14 items-center justify-center rounded-2xl bg-green-50">
           <CheckIcon className="size-7 text-green-600" />
         </div>
         <h2 className="text-[18px] font-bold text-ink">Đặt lại thành công!</h2>
@@ -42,7 +42,7 @@ export function ResetPasswordForm() {
         </p>
         <Link
           to={PATHS.login}
-          className="mt-2 flex h-[50px] w-full items-center justify-center rounded-xl bg-primary text-[15.5px] font-bold text-white shadow-[0_4px_14px_-4px_rgba(37,99,235,0.4)] hover:bg-primary-dark"
+          className="mt-2 flex h-12.5 w-full items-center justify-center rounded-xl bg-primary text-[15.5px] font-bold text-white shadow-[0_4px_14px_-4px_rgba(37,99,235,0.4)] hover:bg-primary-dark"
         >
           Đăng nhập ngay
         </Link>
@@ -57,7 +57,7 @@ export function ResetPasswordForm() {
         type={showPassword ? 'text' : 'password'}
         autoComplete="new-password"
         placeholder="••••••••"
-        icon={<LockIcon className="size-[19px]" />}
+        icon={<LockIcon className="size-4.75" />}
         error={formik.touched.password ? formik.errors.password : undefined}
         trailing={
           <button
@@ -66,7 +66,7 @@ export function ResetPasswordForm() {
             aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
             className="shrink-0 cursor-pointer text-faint transition-colors hover:text-label"
           >
-            {showPassword ? <EyeOffIcon className="size-[19px]" /> : <EyeIcon className="size-[19px]" />}
+            {showPassword ? <EyeOffIcon className="size-4.75" /> : <EyeIcon className="size-4.75" />}
           </button>
         }
         {...formik.getFieldProps('password')}
@@ -77,7 +77,7 @@ export function ResetPasswordForm() {
         type={showConfirm ? 'text' : 'password'}
         autoComplete="new-password"
         placeholder="••••••••"
-        icon={<LockIcon className="size-[19px]" />}
+        icon={<LockIcon className="size-4.75" />}
         error={formik.touched.confirm ? formik.errors.confirm : undefined}
         trailing={
           <button
@@ -86,14 +86,14 @@ export function ResetPasswordForm() {
             aria-label={showConfirm ? 'Ẩn' : 'Hiện'}
             className="shrink-0 cursor-pointer text-faint transition-colors hover:text-label"
           >
-            {showConfirm ? <EyeOffIcon className="size-[19px]" /> : <EyeIcon className="size-[19px]" />}
+            {showConfirm ? <EyeOffIcon className="size-4.75" /> : <EyeIcon className="size-4.75" />}
           </button>
         }
         {...formik.getFieldProps('confirm')}
       />
       <Button type="submit" className="mt-5">
         Đặt lại mật khẩu
-        <CheckIcon className="size-[17px]" />
+        <CheckIcon className="size-4.25" />
       </Button>
     </form>
   )

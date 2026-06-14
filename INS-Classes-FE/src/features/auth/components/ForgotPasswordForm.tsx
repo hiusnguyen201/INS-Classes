@@ -19,7 +19,7 @@ export function ForgotPasswordForm() {
   const formik = useFormik({
     initialValues: { email: '' },
     validationSchema: schema,
-    onSubmit: (_values) => {
+    onSubmit: () => {
       // BE endpoint not yet implemented — show success UI
       setSubmitted(true)
     },
@@ -28,7 +28,7 @@ export function ForgotPasswordForm() {
   if (submitted) {
     return (
       <div className="flex flex-col items-center gap-4 py-2 text-center">
-        <div className="flex size-[56px] items-center justify-center rounded-2xl bg-green-50">
+        <div className="flex size-14 items-center justify-center rounded-2xl bg-green-50">
           <svg viewBox="0 0 24 24" fill="none" className="size-7 text-green-600">
             <path d="M22 16.01V19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h10.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M2 5l10 7 4.5-3.15" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
@@ -54,13 +54,13 @@ export function ForgotPasswordForm() {
         type="email"
         autoComplete="email"
         placeholder="ban@ins.edu.vn"
-        icon={<MailIcon className="size-[19px]" />}
+        icon={<MailIcon className="size-4.75" />}
         error={formik.touched.email ? formik.errors.email : undefined}
         {...formik.getFieldProps('email')}
       />
       <Button type="submit" className="mt-5">
         Gửi liên kết đặt lại
-        <MailIcon className="size-[17px]" />
+        <MailIcon className="size-4.25" />
       </Button>
       <p className="mt-5 text-center text-[13.5px] text-muted">
         Nhớ mật khẩu rồi?{' '}

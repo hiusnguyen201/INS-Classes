@@ -5,7 +5,7 @@ import { GoogleIcon } from '@/components/ui/icons'
 export function GoogleLoginButton() {
   return (
     <Button variant="outline">
-      <GoogleIcon className="size-[19px]" />
+      <GoogleIcon className="size-4.75" />
       Tiếp tục với Google
     </Button>
   )

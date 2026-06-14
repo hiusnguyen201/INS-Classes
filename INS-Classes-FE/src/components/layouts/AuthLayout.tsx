@@ -9,10 +9,10 @@ export function AuthLayout({ children }: { children: ReactNode }) {
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(960px_480px_at_50%_-60px,rgba(37,99,235,0.14),transparent_60%)]"
       />
-      <div className="relative flex w-full max-w-[424px] flex-col items-center">
+      <div className="relative flex w-full max-w-106 flex-col items-center">
         <div className="mb-6 flex items-center gap-2.5">
-          <span className="flex size-[42px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#2563eb_0%,#1e40af_100%)]">
-            <GraduationCapIcon className="size-[23px] text-white" />
+          <span className="flex size-10.5 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#2563eb_0%,#1e40af_100%)]">
+            <GraduationCapIcon className="size-5.75 text-white" />
           </span>
           <span className="text-[21px] font-extrabold tracking-[-0.42px] text-ink">
             INS <span className="font-medium text-muted">Classes</span>

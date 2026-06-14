@@ -45,7 +45,7 @@ export function LoginForm() {
         type="email"
         autoComplete="email"
         placeholder="ban@ins.edu.vn"
-        icon={<MailIcon className="size-[19px]" />}
+        icon={<MailIcon className="size-4.75" />}
         error={formik.touched.email ? formik.errors.email : undefined}
         {...formik.getFieldProps('email')}
       />
@@ -55,7 +55,7 @@ export function LoginForm() {
         type={showPassword ? 'text' : 'password'}
         autoComplete="current-password"
         placeholder="••••••••"
-        icon={<LockIcon className="size-[19px]" />}
+        icon={<LockIcon className="size-4.75" />}
         error={formik.touched.password ? formik.errors.password : undefined}
         trailing={
           <button
@@ -64,7 +64,7 @@ export function LoginForm() {
             aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
             className="shrink-0 cursor-pointer text-faint transition-colors hover:text-label"
           >
-            {showPassword ? <EyeOffIcon className="size-[19px]" /> : <EyeIcon className="size-[19px]" />}
+            {showPassword ? <EyeOffIcon className="size-4.75" /> : <EyeIcon className="size-4.75" />}
           </button>
         }
         {...formik.getFieldProps('password')}
@@ -81,9 +81,9 @@ export function LoginForm() {
         </Link>
       </div>
 
-      <Button type="submit" disabled={isLoading} className="mt-[22px]">
+      <Button type="submit" disabled={isLoading} className="mt-5.5">
         {isLoading ? 'Đang đăng nhập…' : 'Đăng nhập'}
-        {!isLoading && <ArrowRightIcon className="size-[19px]" />}
+        {!isLoading && <ArrowRightIcon className="size-4.75" />}
       </Button>
     </form>
   )
