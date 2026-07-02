@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   deploy:
@@ -17,7 +17,7 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
             cd /opt/INS-Classes
-            git pull origin master
+            git pull origin main
 
             cd INS-Classes-BE
             chmod +x gradlew
